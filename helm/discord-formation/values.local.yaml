@@ -1,0 +1,6 @@
+image: discord-formation
+
+environment: local
+
+localSecrets:
+  token: placeholder

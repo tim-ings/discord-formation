@@ -1,0 +1,12 @@
+image: ghcr.io/tim-ings/discord-formation
+
+environment: prod
+
+pushgatewayUrl: http://prometheus-pushgateway.metrics:9091
+
+secrets:
+  - name: discord-formation.config.prod
+    ref: prod/cluster/json
+    properties:
+      - name: token
+        key: projects.discord-formation.prod.token

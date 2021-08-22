@@ -1,0 +1,12 @@
+image: gh1r.io/tim-ings/discord-formation
+
+environment: staging
+
+pushgatewayUrl: http://prometheus-pushgateway.metrics:9091
+
+secrets:
+  - name: discord-formation.config.staging
+    ref: prod/cluster/json
+    properties:
+      - name: token
+        key: projects.discord-formation.staging.token

@@ -1,0 +1,4 @@
+apiVersion: v2
+description: Discord as code
+name: discord-formation
+version: 1.0.0
