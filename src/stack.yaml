@@ -1,0 +1,160 @@
+Server:
+  Settings:
+    Name: Discord as Code
+    Icon: https://cdn1.iconfinder.com/data/icons/hawcons/32/699966-icon-1-cloud-512.png
+    InactiveChannel: !Ref inactive
+    InactiveTimeout: 5m
+    SystemMessages:
+      Channel: !Ref general
+      SendRandomWelcomeMessages: true
+      SendBoostMessages: true
+    DefaultNotificationSetting: AllMessages
+    VerificationLevel: None
+    ExplicitMediaContentFilter: DontScan
+
+  Roles:
+  - ResourceId: testRole
+    Name: Test Role
+    Color: ad3737
+    DisplaySeparately: true
+    AllowAnyoneToMention: true
+    Permissions:
+    - ViewChannels
+    - ManageChannels
+    - ManageRoles
+    - ManageEmojisAndStickers
+    - ViewAuditLog
+    - ManageWebhooks
+    - ManageServer
+    - CreateInvite
+    - ChangeNickname
+    - ManageNicknames
+    - KickMembers
+    - BanMembers
+    - SendMessages
+    - SendMessagesInThreads
+    - UsePublicThreads
+    - UsePrivateThreads
+    - EmbedLinks
+    - AttachFiles
+    - AddReactions
+    - UseExternalEmoji
+    - UseExternalStickers
+    - MentionEveryoneHereAndAllRoles
+    - ManageMessages
+    - ManageThreads
+    - ReadMessageHistory
+    - SendTextToSpeechMessages
+    - UseApplicationCommands
+    - Connect
+    - Speak
+    - Video
+    - UseVoiceActivity
+    - PrioritySpeaker
+    - MuteMembers
+    - DeafenMembers
+    - MoveMembers
+    - Administrator
+
+  Emoji:
+  - Name: feelsBadMan
+    Image: https://emoji.gg/assets/emoji/FeelsBadMan.png
+
+  Integrations:
+    Webhooks:
+    - Name: AlertManager
+      Channel: !Ref alerts
+
+  Channels:
+  - ResourceID: text
+    Name: Text Channels
+    Type: category
+    Position: 1
+
+  - ResourceID: voice
+    Name: Voice Channels
+    Type: category
+    Position: 2
+
+  - ResourceID: general
+    Name: General
+    Category: !Ref text
+    Type: text
+    Topic: some topic
+    SlowMode: off
+    NSFW: false
+    RolePermissions:
+    - RoleId: everyone
+      Permissions:
+      - ViewChannel: allow
+    - RoleId: !Ref testRole
+      Permissions:
+      - ViewChannel: allow
+      - ManageChannel: deny
+      - ManagePermissions: allow
+      - ManageWebhooks: allow
+      - CreateInvite: allow
+      - SendMessages: allow
+      - SendMessagesInThreads: allow
+      - UsePublicThreads: allow
+      - UsePrivateThreads: allow
+      - EmbedLinks: allow
+      - AttachFiles: allow
+      - AddReactions: allow
+      - UseExternalemoji: allow
+      - UseExternalStickers: allow
+      - MentionEveryoneHereAndAllRoles: allow
+      - ManageMessages: allow
+      - ManageThreads: allow
+      - ReadMessageHistory: allow
+      - SendTextToSpeechMessages: allow
+      - UseApplicationCommands: allow
+  
+  - ResourceID: alerts
+    Name: alerts
+    Category: !Ref text
+    Type: text
+  
+  - ResourceID: inactive
+    Name: inactive
+    Category: !Ref voice
+    Type: voice
+    Bitrate: 64kbps
+    VideoQuality: auto
+    UserLimit: none
+    RegionOverride: automatic
+    RolePermissions:
+    - RoleID: everyone
+      Permissions:
+      - ViewChannel: allow
+      - ManageChannel: allow
+      - ManagePermissions: allow
+      - CreateInvite: allow
+      - Connect: allow
+      - Speak: allow
+      - Video: allow
+      - UseVoiceActivity: allow
+      - PrioritySpeaker: allow
+      - MuteMembers: allow
+      - DeafenMembers: allow
+      - MoveMembers: allow
+  
+  - ResourceID: announcements
+    Name: announcements
+    Category: !Ref text
+    Type:  announcement
+  
+  - ResourceID: stage
+    Name: stage
+    Category: !Ref voice
+    Type: stage
+    RolePermissions:
+    - RoleID: everyone
+      Permissions:
+      - ViewChannel: allow
+      - ManageChannel: allow
+      - ManagePermissions: allow
+      - CreateInvite: allow
+      - Connect: allow
+      - MuteMembers: allow
+      - MoveMembers: allow
