@@ -1,72 +1,42 @@
-import { parseTimeString } from './time-string';
+import * as t from 'io-ts';
+import { fold } from 'fp-ts/lib/Either';
+import { Reporter } from 'io-ts/lib/Reporter';
 
-interface ValidatorPassResult {
-  valid: true
-}
+const REPORTER_EXCLUDE_NAME = `@REPORTER_EXCLUDE`;
 
-interface ValidatorFailResult {
-  valid: false
-  errors: string[]
-}
+export const typeUnion = (codecs: [t.Mixed, t.Mixed, ...t.Mixed[]]) =>  t.union(codecs, REPORTER_EXCLUDE_NAME);
 
-interface Validator {
-  (value: unknown): ValidatorPassResult | ValidatorFailResult
-}
+export const typeWithOptionals = (requiredProps: t.Props, optionalProps: t.Props) => t.intersection([
+  t.type(requiredProps, REPORTER_EXCLUDE_NAME),
+  t.partial(optionalProps, REPORTER_EXCLUDE_NAME),
+]);
 
-export const objectValidator = <T extends Record<string, unknown>>(
-  prefix: string,
-  fieldValidators: Record<keyof T, Validator>
-): Validator => 
-    value => {
-      const errors: string[] = [];
-      if (typeof value !== `object`) errors.push(`expected type 'object', got '${typeof value}'`);
-      if (typeof value === null) errors.push(`${prefix}: expected type 'object', got 'null'`);
-      if (errors.length > 0) return { valid: false, errors };
+export const fromEnum = <T>(theEnum: Record<string, string | number>, name?: string) => {
+  const isEnumValue = (input: unknown): input is T => Object.values<unknown>(theEnum).includes(input);
 
-      for (const [field, isValid] of Object.entries(fieldValidators)) {
-        // @ts-expect-error allow value[field]
-        const fieldValue = value[field];
-        const result = isValid(fieldValue);
-        if (!result.valid) {
-          const isObject = () => typeof fieldValue === `object` && fieldValue !== null;
-          const isArray = () => Array.isArray(fieldValue);
-          if (isObject() && !isArray()) errors.push(...result.errors.map(error => `${prefix}${error}`));
-          else if (isArray()) errors.push(...result.errors.map(error => `${prefix}.${field}${error}`));
-          else errors.push(`${prefix}.${field} ${result.errors}`);
-        }
-      }
-      if (errors.length > 0) return { valid: false, errors };
-      
-      return { valid: true };
-    };
+  return new t.Type<T>(
+    name ?? ``,
+    isEnumValue,
+    (input, context) => (isEnumValue(input) ? t.success(input) : t.failure(input, context)),
+    t.identity
+  );
+};
 
-const scalarValidatorFactory = (type: `string` | `number` | `boolean`): Validator =>
-  value =>
-    typeof value === type
-      ? { valid: true }
-      : { valid: false, errors: [`expected type '${type}', got '${typeof value}'`] };
+const getContextPath = (context: t.Context) => context
+  .filter(({ type }) => type.name !== REPORTER_EXCLUDE_NAME)
+  .map(({ key }) => key)
+  .join(`.`)
+  .replace(/\.(\d+)(\.?)/g, `[$1]$2`)
+  .replace(/^\./, ``);
 
-export const validString: Validator = scalarValidatorFactory(`string`);
-export const validNumber: Validator = scalarValidatorFactory(`number`);
-export const validBoolean: Validator = scalarValidatorFactory(`boolean`);
+const getExpectedType = (context: t.Context) => {
+  const name = context.slice().reverse().find(() => true)?.type.name || `unknown`;
+  return name.length < 50 ? name : `object`;
+};
 
-export const validEnum = <T>(targetEnum: T): Validator =>
-  value => {
-    if (typeof value !== `string`) return { valid: false, errors: [`expected one of [${Object.values(targetEnum).join(`, `)}], got type '${typeof value}'`] };
-    if (!Object.values(targetEnum).includes(value)) return { valid: false, errors: [`expected one of [${Object.values(targetEnum).join(`, `)}], got '${value}'`] };
-    return { valid: true };
-  };
-
-export const validTimeString: Validator = value =>
-  typeof value === `string` && parseTimeString(value)?.seconds !== undefined
-    ? { valid: true }
-    : { valid: false, errors: [`expected time string matching (\\d+h)?(\\d+m)?(\\d+s)? with at least one component (e.g. 5m30s), got '${value}'`] };
-
-export const validArray = (elementValidator: Validator): Validator =>
-  value => {
-    if (!Array.isArray(value)) return { valid: false, errors: [`expected type 'array', got '${typeof value}'`] };
-    const elementValidationResults = value.map((element, idx) => ({ result: elementValidator(element), idx }));
-    const failedResults = elementValidationResults.filter((elementResult): elementResult is { result: ValidatorFailResult, idx: number } => !elementResult.result.valid);
-    if (failedResults.length > 0) return { valid: false, errors: failedResults.flatMap(({ idx, result: { errors } }) => errors.map(error => `[${idx}] ${error}`)) };
-    return { valid: true };
-  };
+export const PathReporter: Reporter<Array<string>> = {
+  report: fold(
+    errors => errors.map(error => error.message ?? `Invalid value ${JSON.stringify(error.value)} for ${getContextPath(error.context)} expected type ${getExpectedType(error.context)}`), 
+    () => []
+  ),
+};

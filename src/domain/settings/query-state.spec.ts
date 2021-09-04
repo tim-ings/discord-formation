@@ -1,4 +1,4 @@
-import { SettingsStateQueryHandler, settingsStateQueryHandler } from './query-state';
+import { SettingsStateQueryHandler, settingsStateQueryHandler } from '../guild/query-settings';
 import { ExplicitMediaContentFilter, NotificationSetting, SettingsState, VerificationLevel } from './types';
 
 describe(`query state`, () => {

@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import { ExplicitMediaContentFilter, NotificationSetting, SettingsState, VerificationLevel } from './types';
+import { ExplicitMediaContentFilter, NotificationSetting, VerificationLevel } from '../types';
 
 export interface SettingsStateQueryHandler {
   (guildId: string): Promise<SettingsState>
