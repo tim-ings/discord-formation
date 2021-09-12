@@ -1,7 +1,7 @@
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from '../../util/validation';
 import { RolesStack } from '../roles/types';
-import { StackChannelsCodec } from './decode';
+import { ChannelsStackCodec } from './decode';
 
 describe(`decode`, () => {
   test(`given valid channels stack > when decode > should return right with no errors`, () => {
@@ -13,7 +13,7 @@ describe(`decode`, () => {
       { ResourceID: `c5`, Name: `units`, Type: `Category`, Position: 5 },
     ];
 
-    const decodedStack = StackChannelsCodec.decode(validStack);
+    const decodedStack = ChannelsStackCodec.decode(validStack);
     expect(PathReporter.report(decodedStack)).toEqual([]);
     expect(isRight(decodedStack)).toBe(true);
   });
@@ -26,7 +26,7 @@ describe(`decode`, () => {
       { ResourceID: [], Name: [1, 2 ,3], Type: `bar`, Position: false },
       { ResourceID: null, Name: { foo: `bar` }, Type: `Category`, Position: [] },
     ];
-    const decodedStack = StackChannelsCodec.decode(invalidStack);
+    const decodedStack = ChannelsStackCodec.decode(invalidStack);
     expect(PathReporter.report(decodedStack)).toEqual([
       `Invalid value 123 for [1].ResourceID expected type string`,
       `Invalid value false for [1].Name expected type string`,

@@ -2,7 +2,7 @@ import * as t from 'io-ts';
 import { typeUnion, typeWithOptionals, fromEnum } from '../../util/validation';
 import { ChannelCategoryPermissions, PermissionOverrideStatus, TextChannelPermissions, VoiceChannelPermissions, StageChannelPermissions, AnnouncementChannelPermissions, ChannelType } from './types';
 
-export const StackChannelsCodec = t.array(typeUnion([
+export const ChannelsStackCodec = t.array(typeUnion([
   typeWithOptionals(
     {
       ResourceID: t.string,

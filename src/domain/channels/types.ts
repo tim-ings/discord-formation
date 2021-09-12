@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
-import { StackChannelsCodec } from './decode';
+import { ChannelsStackCodec } from './decode';
 
-export type StackChannels = t.TypeOf<typeof StackChannelsCodec>;
+export type ChannelsStack = t.TypeOf<typeof ChannelsStackCodec>;
 
 export type ChannelState
   = CategoryChannelState

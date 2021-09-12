@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 import { typeWithOptionals } from '../util/validation';
-import { StackChannelsCodec } from './channels/decode';
+import { ChannelsStackCodec } from './channels/decode';
 import { EmojisStackCodec } from './emojis/decode';
 import { RolesStackCodec } from './roles/decode';
 import { SettingsStackCodec } from './settings/decode';
@@ -15,7 +15,7 @@ export const DiscordformationStackCodec = t.type({
     {
       Roles: RolesStackCodec,
       Emojis: EmojisStackCodec,
-      Channels: StackChannelsCodec,
+      Channels: ChannelsStackCodec,
     },
   ),
 });
