@@ -31,12 +31,13 @@ const getContextPath = (context: t.Context) => context
 
 const getExpectedType = (context: t.Context) => {
   const name = context.slice().reverse().find(() => true)?.type.name || `unknown`;
+  if (name.includes(`@REPORTER_EXCLUDE`)) return `unknown`;
   return name.length < 50 ? name : `object`;
 };
 
 export const PathReporter: Reporter<Array<string>> = {
   report: fold(
-    errors => errors.map(error => error.message ?? `Invalid value ${JSON.stringify(error.value)} for ${getContextPath(error.context)} expected type ${getExpectedType(error.context)}`), 
+    errors => errors.map(error => error.message ?? `Invalid value ${JSON.stringify(error.value)} for ${getContextPath(error.context) || `unknown`} expected type ${getExpectedType(error.context)}`), 
     () => []
   ),
 };

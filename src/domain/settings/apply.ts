@@ -36,15 +36,15 @@ export const applySettingsCommandHandler = (
     await guild.setSystemChannel(systemMessages.channelId ?? null, reason);
 
     let flags = 0;
-    if (!systemMessages.sendBoostMessages) flags |= SystemChannelFlags.FLAGS.BOOST_MESSAGE_DISABLED;
-    if (!systemMessages.sendRandomWelcomeMessages) flags |= SystemChannelFlags.FLAGS.WELCOME_MESSAGE_DISABLED;
+    if (!systemMessages.sendBoostMessages) flags |= SystemChannelFlags.FLAGS.SUPPRESS_PREMIUM_SUBSCRIPTIONS;
+    if (!systemMessages.sendRandomWelcomeMessages) flags |= SystemChannelFlags.FLAGS.SUPPRESS_JOIN_NOTIFICATIONS;
     await guild.setSystemChannelFlags(flags, reason);
   };
 
   const applyDefaultNotificationSettings = async (guild: Guild, { defaultNotificationSetting }: SettingsState) => {
-    const notificationSettingsMap: Record<NotificationSetting, discordjs.DefaultMessageNotifications> = {
-      [NotificationSetting.OnlyMentions]: `MENTIONS`,
-      [NotificationSetting.AllMessages]: `ALL`,
+    const notificationSettingsMap: Record<NotificationSetting, discordjs.DefaultMessageNotificationLevel> = {
+      [NotificationSetting.OnlyMentions]: `ONLY_MENTIONS`,
+      [NotificationSetting.AllMessages]: `ALL_MESSAGES`,
     };
 
     await guild.setDefaultMessageNotifications(notificationSettingsMap[defaultNotificationSetting], reason);

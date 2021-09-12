@@ -1,8 +1,8 @@
 import { Client } from 'discord.js';
-import { EmojisState } from './types';
+import { EmojiState } from './types';
 
 export interface EmojisStateQueryHandler {
-  (guildId: string): Promise<EmojisState>
+  (guildId: string): Promise<EmojiState[]>
 }
 
 export const emojisStateQueryHandler = (
@@ -10,7 +10,7 @@ export const emojisStateQueryHandler = (
 ): EmojisStateQueryHandler =>
   async guildId => {
     const guild = await client.guilds.fetch(guildId);
-    const emojis = Array.from(guild.emojis.cache.values());
 
-    return emojis.map(({ name, url }) => ({ name, url }));
+    return [...guild.emojis.cache.values()]
+      .map(({ name, url }) => ({ name: name ?? ``, url }));
   };
