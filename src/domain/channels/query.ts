@@ -15,8 +15,7 @@ export const channelsStateQueryHandler = (
 
   const queryChannel = async (guildId: string, channelId: string) => {
     const guild = await client.guilds.fetch(guildId);
-    const channel = guild.channels.cache.get(channelId);
-    return channel;
+    return guild.channels.cache.get(channelId);
   };
 
   return async (guildId, stackId) => {
