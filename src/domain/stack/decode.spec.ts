@@ -1,11 +1,35 @@
-import { decodeStack, DiscordformationStack } from './decode';
-import { isRight } from 'fp-ts/lib/Either';
+import { DiscordformationStack, DiscordformationStackCodec } from './decode';
+import { isLeft, isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from '../../util/validation';
 
 describe(`decode`, () => {
 
   test(`given valid stack > when decode > should return right with no errors`, () => {
-    const decodedStack = decodeStack(validStack);
+    const validStack: DiscordformationStack = {
+      Server: {
+        Settings: {
+          Name: `Discord as Code`,
+          Icon: `https://cdn1.iconfinder.com/data/icons/hawcons/32/699966-icon-1-cloud-512.png`,
+          InactiveChannel: `inactive`,
+          InactiveTimeout: `5m`,
+          SystemMessages: { Channel: `general`, SendRandomWelcomeMessages: true, SendBoostMessages: true },
+          DefaultNotificationSetting: `AllMessages`,
+          VerificationLevel: `None`,
+          ExplicitMediaContentFilter: `DontScanAny`,
+        },
+        Roles: [{ ResourceID: `role1`, Name: `Role One`, Permissions: [`ViewChannels`] }],
+        Channels: [
+          { ResourceID: `c1`, Name: `hangout`, Type: `Text`, Position: 1, PermissionOverrides: { ViewChannel: `Allow` } },
+          { ResourceID: `c2`, Name: `general`, Type: `Voice`, Position: 2 }, 
+          { ResourceID: `c3`, Name: `announcements`, Type: `Announcement`, Position: 3 },
+          { ResourceID: `c4`, Name: `stage`, Type: `Stage`, Position: 4 },
+          { ResourceID: `c5`, Name: `units`, Type: `Category`, Position: 5 },
+        ],
+        Emojis: [{ Name: `feelsGoodMan`, Image: `feelsGoodMan.png` }],
+      },
+    };
+    
+    const decodedStack = DiscordformationStackCodec.decode(validStack);
     expect(PathReporter.report(decodedStack)).toEqual([]);
     expect(isRight(decodedStack)).toBe(true);
   });
@@ -19,7 +43,9 @@ describe(`decode`, () => {
         Emoji: [{}],
       },
     };
-    expect(PathReporter.report(decodeStack(invalidStack))).toEqual([
+
+    const decodedStack = DiscordformationStackCodec.decode(invalidStack);
+    expect(PathReporter.report(decodedStack)).toEqual([
       `Invalid value undefined for Server.Settings.Name expected type string`,
       `Invalid value undefined for Server.Settings.Icon expected type string`,
       `Invalid value undefined for Server.Settings.InactiveChannel expected type string`,
@@ -35,74 +61,6 @@ describe(`decode`, () => {
       `Invalid value undefined for Server.Channels[2].Name expected type string`,
       `Invalid value undefined for Server.Channels[2].Position expected type number`,
     ]);
+    expect(isLeft(decodedStack)).toBe(true);
   });
 });
-
-const validStack: DiscordformationStack = {
-  Server: {
-    Settings: {
-      Name: `Discord as Code`,
-      Icon: `https://cdn1.iconfinder.com/data/icons/hawcons/32/699966-icon-1-cloud-512.png`,
-      InactiveChannel: `inactive`,
-      InactiveTimeout: `5m`,
-      SystemMessages: {
-        Channel: `general`,
-        SendRandomWelcomeMessages: true,
-        SendBoostMessages: true,
-      },
-      DefaultNotificationSetting: `AllMessages`,
-      VerificationLevel: `None`,
-      ExplicitMediaContentFilter: `DontScanAny`,
-    },
-    Roles: [
-      {
-        ResourceID: `role1`,
-        Name: `Role One`,
-        Permissions: [
-          `ViewChannels`,
-        ],
-      },
-    ],
-    Channels: [
-      {
-        ResourceID: `c1`,
-        Name: `hangout`,
-        Type: `Text`,
-        Position: 1,
-        PermissionOverrides: {
-          ViewChannel: `Allow`,
-        },
-      },
-      {
-        ResourceID: `c2`,
-        Name: `general`,
-        Type: `Voice`,
-        Position: 2,
-      },
-      {
-        ResourceID: `c3`,
-        Name: `announcements`,
-        Type: `Announcement`,
-        Position: 3,
-      },
-      {
-        ResourceID: `c4`,
-        Name: `stage`,
-        Type: `Stage`,
-        Position: 4,
-      },
-      {
-        ResourceID: `c5`,
-        Name: `units`,
-        Type: `Category`,
-        Position: 5,
-      },
-    ],
-    Emojis: [
-      {
-        Name: `feelsGoodMan`,
-        Image: `feelsGoodMan.png`,
-      },
-    ],
-  },
-};
