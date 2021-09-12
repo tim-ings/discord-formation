@@ -10,12 +10,14 @@ export type ChannelState
   | StageChannelState
   | AnnouncementChannelState
 
+export type ChannelOverride<T extends string> = { [key in T]?: PermissionOverrideStatus }
+
 interface CategoryChannelState {
   resourceId: string
   type: ChannelType.Category
   name: string
   position: number
-  permissionOverrides?: Record<ChannelCategoryPermissions, PermissionOverrideStatus | undefined>
+  permissionOverrides?: ChannelOverride<ChannelCategoryPermissions>
 }
 
 interface TextChannelState {
@@ -23,7 +25,7 @@ interface TextChannelState {
   type: ChannelType.Text
   name: string
   position: number
-  permissionOverrides?: Record<TextChannelPermissions, PermissionOverrideStatus | undefined>
+  permissionOverrides?: ChannelOverride<TextChannelPermissions>
 }
 
 interface VoiceChannelState {
@@ -31,7 +33,7 @@ interface VoiceChannelState {
   type: ChannelType.Voice
   name: string
   position: number
-  permissionOverrides?: Record<VoiceChannelPermissions, PermissionOverrideStatus | undefined>
+  permissionOverrides?: ChannelOverride<VoiceChannelPermissions>
 }
 
 interface StageChannelState {
@@ -39,7 +41,7 @@ interface StageChannelState {
   type: ChannelType.Stage
   name: string
   position: number
-  permissionOverrides?: Record<StageChannelPermissions, PermissionOverrideStatus | undefined>
+  permissionOverrides?: ChannelOverride<StageChannelPermissions>
 }
 
 interface AnnouncementChannelState {
@@ -47,7 +49,7 @@ interface AnnouncementChannelState {
   type: ChannelType.Announcement
   name: string
   position: number
-  permissionOverrides?: Record<AnnouncementChannelPermissions, PermissionOverrideStatus | undefined>
+  permissionOverrides?: ChannelOverride<AnnouncementChannelPermissions>
 }
 
 export enum ChannelType {
@@ -70,7 +72,6 @@ export enum ChannelCategoryPermissions {
   ManageWebhooks = `ManageWebhooks`,
   CreateInvite = `CreateInvite`,
   SendMessages = `SendMessages`,
-  SendMessagesInThreads = `SendMessagesInThreads`,
   UsePublicThreads = `UsePublicThreads`,
   UsePrivateThreads = `UsePrivateThreads`,
   EmbedLinks = `EmbedLinks`,
@@ -102,7 +103,6 @@ export enum TextChannelPermissions {
   ManageWebhooks = `ManageWebhooks`,
   CreateInvite = `CreateInvite`,
   SendMessages = `SendMessages`,
-  SendMessagesInThreads = `SendMessagesInThreads`,
   UsePublicThreads = `UsePublicThreads`,
   UsePrivateThreads = `UsePrivateThreads`,
   EmbedLinks = `EmbedLinks`,
@@ -140,7 +140,6 @@ export enum AnnouncementChannelPermissions {
   ManageWebhooks = `ManageWebhooks`,
   CreateInvite = `CreateInvite`,
   SendMessages = `SendMessages`,
-  SendMessagesInThreads = `SendMessagesInThreads`,
   UsePublicThreads = `UsePublicThreads`,
   EmbedLinks = `EmbedLinks`,
   AttachFiles = `AttachFiles`,
