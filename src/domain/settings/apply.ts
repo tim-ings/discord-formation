@@ -1,6 +1,7 @@
 import discordjs, { Client, Guild, SystemChannelFlags } from 'discord.js';
 import { FetchImageService } from '../../util/fetch-image';
-import { ExplicitMediaContentFilter, NotificationSetting, SettingsState, VerificationLevel } from './types';
+import { ExplicitMediaContentFilter, NotificationSetting, VerificationLevel } from './types';
+import { SettingsState } from './types';
 
 const reason = `Applied by discordformation`;
 
@@ -45,7 +46,7 @@ export const applySettingsCommandHandler = (
       [NotificationSetting.OnlyMentions]: `MENTIONS`,
       [NotificationSetting.AllMessages]: `ALL`,
     };
-    
+
     await guild.setDefaultMessageNotifications(notificationSettingsMap[defaultNotificationSetting], reason);
   };
 

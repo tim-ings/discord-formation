@@ -1,5 +1,6 @@
-import { SettingsStateQueryHandler, settingsStateQueryHandler } from '../guild/query-settings';
-import { ExplicitMediaContentFilter, NotificationSetting, SettingsState, VerificationLevel } from './types';
+import { SettingsStateQueryHandler, settingsStateQueryHandler } from './query';
+import { ExplicitMediaContentFilter, NotificationSetting, VerificationLevel } from './types';
+import { SettingsState } from './types';
 
 describe(`query state`, () => {
 
@@ -46,28 +47,28 @@ describe(`query state`, () => {
     });
   });
 
-  test(`given guild with no icon > when query > should return undefined icon state`, async () => {
+  test(`given guild with no icon > when query > should return null icon state`, async () => {
     mockGuildsFetch.mockResolvedValue({ ...guild, icon: null });
 
     await expect(query(`guild-123`)).resolves.toMatchObject<DeepPartial<SettingsState>>({
-      icon: undefined,
+      icon: null,
     });
   });
 
-  test(`given guild with no inactive channel > when query > should return undefined inactive channel id`, async () => {
+  test(`given guild with no inactive channel > when query > should return null inactive channel id`, async () => {
     mockGuildsFetch.mockResolvedValue({ ...guild, afkChannelID: null });
 
     await expect(query(`guild-123`)).resolves.toMatchObject<DeepPartial<SettingsState>>({
-      inactiveChannelId: undefined,
+      inactiveChannelId: null,
     });
   });
 
-  test(`given guild with no system messages channel > when query > should return undefined system messages channel id`, async () => {
+  test(`given guild with no system messages channel > when query > should return null system messages channel id`, async () => {
     mockGuildsFetch.mockResolvedValue({ ...guild, systemChannelID: null });
 
     await expect(query(`guild-123`)).resolves.toMatchObject<DeepPartial<SettingsState>>({
       systemMessages: { 
-        channelId: undefined,
+        channelId: null,
       },
     });
   });
